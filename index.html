@@ -202,19 +202,28 @@ const save = () => {
 };
 
 // ===== Холбоос хувиргагч =====
+// ===== Холбоос хувиргагч =====
 function embed(u) {
   u = String(u || '').trim();
   if (/^javascript:/i.test(u)) return '';
   const e = esc(u); let m;
   const fr = (src, cls='') => `<iframe class="${cls}" src="${src}" loading="lazy" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture; fullscreen"></iframe>`;
+  
+  // YouTube, Spotify гэх мэт...
   if (m = u.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/)) return fr(`https://www.youtube-nocookie.com/embed/${m[1]}`);
   if (m = u.match(/youtube\.com\/playlist\?(?:.*&)?list=([\w-]+)/)) return fr(`https://www.youtube-nocookie.com/embed/videoseries?list=${m[1]}`);
   if (m = u.match(/open\.spotify\.com\/(?:intl-\w+\/)?(track|album|playlist|episode|show|artist)\/(\w+)/)) return fr(`https://open.spotify.com/embed/${m[1]}/${m[2]}`, m[1]=='track'||m[1]=='episode' ? 'sp' : 'sp big');
   if (/soundcloud\.com\//.test(u)) return fr(`https://w.soundcloud.com/player/?url=${encodeURIComponent(u)}`, 'sp');
   if (m = u.match(/vimeo\.com\/(\d+)/)) return fr(`https://player.vimeo.com/video/${m[1]}`);
+  
+  // ШИНЭЭР НЭМСЭН МӨР: Google Drive линк таньж preview болгох
+  if (m = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/)) return fr(`https://drive.google.com/file/d/${m[1]}/preview`);
+
+  // MP4, MP3, Зураг таних хэсэг...
   if (/\.(mp4|webm|mov)(\?|$)/i.test(u)) return `<video controls preload="metadata" playsinline src="${e}"></video>`;
   if (/\.(mp3|ogg|wav|m4a)(\?|$)/i.test(u)) return `<audio controls src="${e}"></audio>`;
   if (/\.(jpe?g|png|gif|webp|avif)(\?|$)/i.test(u)) return `<img src="${e}" alt="" loading="lazy">`;
+  
   let host = u; try { host = new URL(u).hostname; } catch(x) {}
   return `<a class="lk" href="${e}" target="_blank" rel="noopener">${esc(host)}</a>`;
 }
