@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Миний сайт</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--s1:#141414;--s2:#1d1d1d;--ln:#2b2b2b;--tx:#ececec;--mu:#8d8d8d;--ac:#fff;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 Manrope,system-ui,sans-serif;display:grid;grid-template-columns:230px minmax(0,1fr);min-height:100vh}
+aside{position:sticky;top:0;height:100vh;padding:32px 24px;border-right:1px solid var(--ln);display:flex;flex-direction:column;gap:24px}
+#brand{font-weight:800;font-size:1.25rem;color:var(--ac);text-decoration:none;overflow-wrap:anywhere}
+nav a{display:block;padding:7px 0;color:var(--mu);text-decoration:none}
+nav a:hover,nav a.on{color:var(--ac)}
+nav a.on{font-weight:600}
+#admin{margin-top:auto;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+main{padding:48px clamp(20px,5vw,64px) 96px;max-width:1040px;width:100%}
+h1{font-weight:800;margin:0;line-height:1.05}
+h2{font-size:1.1rem;margin:56px 0 16px;color:var(--mu);font-weight:600}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}
+.hd h1{font-size:clamp(2rem,5vw,3rem)}
+.hero{display:grid;grid-template-columns:minmax(0,260px) 1fr;gap:clamp(24px,5vw,56px);align-items:end}
+.hero h1{font-size:clamp(2.6rem,7vw,5.5rem);letter-spacing:-.03em}
+.ph img,.ph0{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;filter:grayscale(1) contrast(1.05);display:block}
+.ph0{background:var(--s2)}
+.bio{color:#c9c9c9;font-size:1.05rem;max-width:56ch;white-space:pre-wrap;margin:20px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.grid.tx{grid-template-columns:1fr;max-width:720px}
+.c{background:var(--s1);border:1px solid var(--ln);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.c h3{margin:0;font-size:1.1rem;line-height:1.3}
+.c small{color:var(--mu);margin-right:12px}
+.c p{margin:0;color:#b5b5b5;white-space:pre-wrap;overflow-wrap:anywhere}
+.c iframe,.c video{width:100%;aspect-ratio:16/9;border:0;border-radius:4px;background:#000;display:block}
+.c iframe.sp{aspect-ratio:auto;height:152px}
+.c iframe.sp.big{height:352px}
+.c img{width:100%;border-radius:4px}
+.c audio{width:100%}
+.lk{color:var(--ac);overflow-wrap:anywhere}
+.mu{color:var(--mu)}
+.ttl{all:unset;cursor:pointer;font:600 1.1rem/1.3 Manrope,sans-serif;color:var(--ac)}
+.ttl:hover{text-decoration:underline}
+.ex{font-family:Lora,serif}
+.ad{display:flex;gap:8px;margin-top:4px}
+button,.b{font:inherit;font-size:.9rem;background:var(--s2);color:var(--tx);border:1px solid var(--ln);border-radius:4px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:#666}
+.pri{background:var(--ac);color:#000;border-color:var(--ac);font-weight:600}
+:focus-visible{outline:2px solid #fff;outline-offset:2px}
+dialog{background:var(--s1);color:var(--tx);border:1px solid var(--ln);border-radius:8px;padding:24px;width:min(680px,92vw);max-height:90vh}
+dialog::backdrop{background:rgba(0,0,0,.75)}
+.rt{font-family:Lora,serif;font-size:1.15rem;line-height:1.85;white-space:pre-wrap;margin-top:20px}
+.rt.poem{text-align:center;font-style:italic}
+label{display:block;margin:12px 0 4px;color:var(--mu);font-size:.9rem}
+input,select,textarea{width:100%;font:inherit;background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:4px;padding:8px 10px}
+textarea{min-height:180px;resize:vertical}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.hint{color:var(--mu);font-size:.85rem;margin-top:4px}
+[hidden]{display:none!important}
+@media(max-width:760px){
+ body{display:block}
+ aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--ln);padding:20px}
+ nav{display:flex;gap:16px;overflow-x:auto}
+ nav a{white-space:nowrap}
+ #admin{flex-direction:row;margin-top:0}
+ .hero{grid-template-columns:1fr}
+ .ph{max-width:200px}
+}
+</style>
+</head>
+<body>
+<aside>
+  <a id="brand" href="#home"></a>
+  <nav id="nav"></nav>
+  <div id="admin"></div>
+</aside>
+<main id="main"></main>
+
+<dialog id="rd"></dialog>
+
+<dialog id="dm">
+  <form id="fm">
+    <input type="hidden" name="iid">
+    <label>Төрөл</label>
+    <select name="kind"></select>
+    <label>Гарчиг</label>
+    <input name="ttl" required>
+    <div data-k="film playlist video link">
+      <label>Холбоос эсвэл файлын зам</label>
+      <input name="link" placeholder="YouTube, Spotify, SoundCloud, mp4 холбоос эсвэл videos/kino.mp4">
+      <div data-k="film">
+        <input type="file" name="vf" accept="video/mp4,video/webm" style="margin-top:8px">
+        <p class="hint">mp4 файл сонговол зам нь автоматаар “videos/файлын-нэр” болно. Файлаа төслийн videos хавтас руу хуулна.</p>
+      </div>
+    </div>
+    <div data-k="film">
+      <label>Орчуулгын файл (.vtt, заавал биш)</label>
+      <input name="subs" placeholder="subs/kino.vtt">
+    </div>
+    <label>Тайлбар эсвэл бичвэр</label>
+    <textarea name="txt"></textarea>
+    <div class="row"><button type="button" data-a="close">Болих</button><button class="pri">Хадгалах</button></div>
+  </form>
+</dialog>
+
+<dialog id="am">
+  <form id="fa">
+    <label>Нэр</label>
+    <input name="nm" required>
+    <label>Миний тухай</label>
+    <textarea name="bio"></textarea>
+    <label>Зураг</label>
+    <input type="file" name="pf" accept="image/*">
+    <p class="hint" id="pst">Зураг автоматаар жижигрүүлэгдэнэ. Эсвэл доор зургийн холбоос, жишээ нь me.jpg гэж бичнэ.</p>
+    <input name="purl" placeholder="me.jpg эсвэл https://…" style="margin-top:8px">
+    <div class="row"><button type="button" data-a="close">Болих</button><button class="pri">Хадгалах</button></div>
+  </form>
+</dialog>
+
+<script>
+// ===== Тохиргоо =====
+// Нууц хаалга: сайтын хаяг дараа нь /#нууц-үг-хаалга гэж бичиж орно. Хоёуланг нь өөрөө солино.
+const CFG = { door: 'khuleq-zasvar', pass: '1234' };
+const TYPES = { film:'Кино', post:'Тэмдэглэл', poem:'Шүлэг', story:'Зохиол', playlist:'Playlist', video:'Бичлэг', link:'Холбоос' };
+const TEXT = ['post','poem','story'];
+
+// Нийтэд харагдах агуулга. “Экспорт” товчоор авсан кодыг SEED-ийн оронд буулгана.
+const SEED = {
+  profile: { name:'Таны нэр', bio:'Өөрийнхөө тухай энд бичнэ. Зүүн доорх “Засах” товчийг дарж нууц үгээ оруулаад өөрчилнө.', photo:'' },
+  items: [
+    { id:'a1', type:'poem', title:'Жишээ шүлэг', body:'Шөнө дундын цонхны цаанаас\nЦас намуухан буулаа.\nХэнд ч хэлээгүй үгс\nЦасан дээр өөрсдөө бичигдлээ.', date:'2026-11-08' },
+    { id:'a2', type:'post', title:'Анхны тэмдэглэл', body:'Энэ бол жишээ бичвэр. Устгаад өөрийнхөө бичвэрийг нэмээрэй.', date:'2026-11-08' }
+  ]
+};
+
+// ===== Төлөв =====
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let S; try { S = JSON.parse(localStorage.getItem('site-v1')); } catch(e) {}
+S = S || structuredClone(SEED);
+let admin = sessionStorage.getItem('adm') === '1';
+const save = () => { try { localStorage.setItem('site-v1', JSON.stringify(S)); } catch(e) { alert('Хадгалах зай дүүрсэн байна. Зургийг жижигрүүлж эсвэл файлын зам ашиглана уу.'); } };
+
+// ===== Холбоос хувиргагч =====
+function embed(u) {
+  u = String(u || '').trim();
+  if (/^javascript:/i.test(u)) return '';
+  const e = esc(u); let m;
+  const fr = (src, cls='') => `<iframe class="${cls}" src="${src}" loading="lazy" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture; fullscreen"></iframe>`;
+  if (m = u.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/)) return fr(`https://www.youtube-nocookie.com/embed/${m[1]}`);
+  if (m = u.match(/youtube\.com\/playlist\?(?:.*&)?list=([\w-]+)/)) return fr(`https://www.youtube-nocookie.com/embed/videoseries?list=${m[1]}`);
+  if (m = u.match(/open\.spotify\.com\/(?:intl-\w+\/)?(track|album|playlist|episode|show|artist)\/(\w+)/)) return fr(`https://open.spotify.com/embed/${m[1]}/${m[2]}`, m[1]=='track'||m[1]=='episode' ? 'sp' : 'sp big');
+  if (/soundcloud\.com\//.test(u)) return fr(`https://w.soundcloud.com/player/?url=${encodeURIComponent(u)}`, 'sp');
+  if (m = u.match(/vimeo\.com\/(\d+)/)) return fr(`https://player.vimeo.com/video/${m[1]}`);
+  if (/\.(mp4|webm|mov)(\?|$)/i.test(u)) return `<video controls preload="metadata" playsinline src="${e}"></video>`;
+  if (/\.(mp3|ogg|wav|m4a)(\?|$)/i.test(u)) return `<audio controls src="${e}"></audio>`;
+  if (/\.(jpe?g|png|gif|webp|avif)(\?|$)/i.test(u)) return `<img src="${e}" alt="" loading="lazy">`;
+  let host = u; try { host = new URL(u).hostname; } catch(x) {}
+  return `<a class="lk" href="${e}" target="_blank" rel="noopener">${esc(host)}</a>`;
+}
+function media(it) {
+  if (it.type == 'film' && /\.(mp4|webm|mov)(\?|$)/i.test(it.url || ''))
+    return `<video controls preload="metadata" playsinline><source src="${esc(it.url)}">${it.subs ? `<track kind="subtitles" srclang="mn" label="Монгол" src="${esc(it.subs)}" default>` : ''}</video>`;
+  return it.url ? embed(it.url) : '';
+}
+
+// ===== Дүрслэл =====
+function card(it) {
+  const ad = admin ? `<span class="ad"><button data-a="edit" data-id="${it.id}">Засах</button><button data-a="del" data-id="${it.id}">Устгах</button></span>` : '';
+  const meta = `<div><small>${TYPES[it.type]}</small><small>${esc(it.date)}</small></div>`;
+  if (TEXT.includes(it.type)) {
+    const ex = (it.body || '').split('\n').slice(0, 3).join('\n').slice(0, 160);
+    return `<article class="c"><button class="ttl" data-a="read" data-id="${it.id}">${esc(it.title)}</button>${meta}<p class="ex">${esc(ex)}</p>${ad}</article>`;
+  }
+  return `<article class="c">${media(it)}<h3>${esc(it.title)}</h3>${meta}${it.body ? `<p>${esc(it.body)}</p>` : ''}${ad}</article>`;
+}
+function home() {
+  const p = S.profile, rec = S.items.slice(0, 6);
+  return `<section class="hero"><div class="ph">${p.photo ? `<img src="${esc(p.photo)}" alt="">` : '<div class="ph0"></div>'}</div>
+  <div><h1>${esc(p.name)}</h1><p class="bio">${esc(p.bio)}</p>${admin ? '<button data-a="about">Миний тухайг засах</button>' : ''}</div></section>
+  ${rec.length ? `<h2>Сүүлд нэмсэн</h2><div class="grid">${rec.map(card).join('')}</div>` : ''}`;
+}
+function list(k) {
+  const its = S.items.filter(i => i.type == k);
+  return `<div class="hd"><h1>${TYPES[k]}</h1>${admin ? `<button class="pri" data-a="add" data-k="${k}">Нэмэх</button>` : ''}</div>
+  ${its.length ? `<div class="grid ${TEXT.includes(k) ? 'tx' : ''}">${its.map(card).join('')}</div>` : '<p class="mu">Одоогоор юу ч алга.</p>'}`;
+}
+function render() {
+  const h = location.hash.slice(1) || 'home', k = h in TYPES ? h : 'home';
+  $('#brand').textContent = S.profile.name;
+  document.title = S.profile.name;
+  $('#nav').innerHTML = `<a href="#home" class="${k=='home'?'on':''}">Миний тухай</a>` + Object.entries(TYPES).map(([t, v]) => `<a href="#${t}" class="${k==t?'on':''}">${v}</a>`).join('');
+  $('#admin').innerHTML = admin
+    ? '<button data-a="export">Экспорт</button><button data-a="reset">Цэвэрлэх</button><button data-a="out">Гарах</button>'
+    : '';
+  $('#main').innerHTML = k == 'home' ? home() : list(k);
+}
+
+// ===== Засвар =====
+const fm = $('#fm'), fe = fm.elements;
+fe.kind.innerHTML = Object.entries(TYPES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+const sync = () => fm.querySelectorAll('[data-k]').forEach(d => d.hidden = !d.dataset.k.split(' ').includes(fe.kind.value));
+fe.kind.onchange = sync;
+fe.vf.onchange = () => { if (fe.vf.files[0]) fe.link.value = 'videos/' + fe.vf.files[0].name; };
+
+function openForm(id, kind) {
+  const it = S.items.find(x => x.id == id) || { type: kind || 'post' };
+  fe.iid.value = it.id || ''; fe.kind.value = it.type; fe.ttl.value = it.title || '';
+  fe.link.value = it.url || ''; fe.subs.value = it.subs || ''; fe.txt.value = it.body || ''; fe.vf.value = '';
+  sync(); $('#dm').showModal();
+}
+fm.onsubmit = e => {
+  e.preventDefault();
+  const id = fe.iid.value, old = S.items.find(x => x.id == id);
+  const it = { id: id || Date.now().toString(36), type: fe.kind.value, title: fe.ttl.value.trim(), url: fe.link.value.trim(), subs: fe.subs.value.trim(), body: fe.txt.value, date: old ? old.date : new Date().toISOString().slice(0, 10) };
+  if (old) Object.assign(old, it); else S.items.unshift(it);
+  save(); $('#dm').close(); location.hash = it.type; render();
+};
+
+const fa = $('#fa'), ae = fa.elements; let pend = null;
+ae.pf.onchange = () => {
+  const fl = ae.pf.files[0]; if (!fl) return;
+  const r = new FileReader();
+  r.onload = () => { const im = new Image(); im.onload = () => {
+    const k = Math.min(1, 640 / Math.max(im.width, im.height)), c = document.createElement('canvas');
+    c.width = im.width * k; c.height = im.height * k;
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+    pend = c.toDataURL('image/jpeg', .85); $('#pst').textContent = 'Зураг сонгогдлоо. Хадгалах дарна уу.';
+  }; im.src = r.result; };
+  r.readAsDataURL(fl);
+};
+fa.onsubmit = e => {
+  e.preventDefault();
+  S.profile.name = ae.nm.value.trim() || S.profile.name; S.profile.bio = ae.bio.value;
+  S.profile.photo = pend || ae.purl.value.trim() || S.profile.photo;
+  save(); $('#am').close(); render();
+};
+
+// ===== Үйлдлүүд =====
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const a = b.dataset.a, id = b.dataset.id;
+  if (a == 'close') b.closest('dialog').close();
+  else if (a == 'read') {
+    const it = S.items.find(x => x.id == id);
+    $('#rd').innerHTML = `<button data-a="close">Хаах</button><h2 style="color:var(--tx);margin:20px 0 0;font-size:1.6rem">${esc(it.title)}</h2><div class="rt ${it.type}">${esc(it.body)}</div>`;
+    $('#rd').showModal();
+  }
+  else if (a == 'in') { if (prompt('Нууц үг') === CFG.pass) { admin = true; sessionStorage.setItem('adm', '1'); render(); } }
+  else if (a == 'out') { admin = false; sessionStorage.removeItem('adm'); render(); }
+  else if (a == 'add') openForm(null, b.dataset.k);
+  else if (a == 'edit') openForm(id);
+  else if (a == 'del') { if (confirm('Устгах уу?')) { S.items = S.items.filter(x => x.id != id); save(); render(); } }
+  else if (a == 'about') { pend = null; ae.nm.value = S.profile.name; ae.bio.value = S.profile.bio; ae.purl.value = S.profile.photo.startsWith('data:') ? '' : S.profile.photo; ae.pf.value = ''; $('#am').showModal(); }
+  else if (a == 'export') {
+    const t = 'const SEED = ' + JSON.stringify(S, null, 1) + ';';
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => alert('Хуулагдлаа. index.html доторх “const SEED = …;” хэсгийг үүгээр солиод дахин deploy хийнэ.'), () => prompt('Энийг хуулна уу', t));
+  }
+  else if (a == 'reset') { if (confirm('Энэ браузер дээрх өөрчлөлтийг арилгаад файл доторх агуулга руу буцах уу?')) { localStorage.removeItem('site-v1'); S = structuredClone(SEED); render(); } }
+});
+function gate() {
+  if (location.hash !== '#' + CFG.door) return;
+  history.replaceState(null, '', location.pathname + location.search); // хаягаас нууц үгийг арилгана
+  if (!admin && prompt('Нууц үг') === CFG.pass) { admin = true; sessionStorage.setItem('adm', '1'); }
+}
+addEventListener('hashchange', () => { gate(); render(); });
+gate(); render();
+</script>
+</body>
+</html>
