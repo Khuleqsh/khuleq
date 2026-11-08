@@ -8,74 +8,87 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0a0a;--s1:#141414;--s2:#1d1d1d;--ln:#2b2b2b;--tx:#ececec;--mu:#8d8d8d;--ac:#fff;color-scheme:dark}
+:root{--bg:#0a0a0a;--s1:#121212;--s2:#1a1a1a;--ln:#262626;--tx:#ececec;--mu:#8a8a8a;--ac:#fff;color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 Manrope,system-ui,sans-serif;display:grid;grid-template-columns:230px minmax(0,1fr);min-height:100vh}
-aside{position:sticky;top:0;height:100vh;padding:32px 24px;border-right:1px solid var(--ln);display:flex;flex-direction:column;gap:24px}
-#brand{font-weight:800;font-size:1.25rem;color:var(--ac);text-decoration:none;overflow-wrap:anywhere}
-nav a{display:block;padding:7px 0;color:var(--mu);text-decoration:none}
-nav a:hover,nav a.on{color:var(--ac)}
-nav a.on{font-weight:600}
-#admin{margin-top:auto;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
-main{padding:48px clamp(20px,5vw,64px) 96px;max-width:1040px;width:100%}
+html{scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.65 Manrope,system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:0;z-index:5;background:rgba(10,10,10,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--ln)}
+.bar{max-width:1120px;margin:0 auto;padding:14px clamp(20px,5vw,48px);display:flex;align-items:center;justify-content:space-between;gap:24px}
+#brand{font-weight:800;font-size:1.15rem;letter-spacing:-.01em;color:var(--ac);text-decoration:none;white-space:nowrap}
+nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{padding:7px 14px;border-radius:999px;color:var(--mu);text-decoration:none;font-size:.92rem;white-space:nowrap;transition:color .15s,background .15s}
+nav a:hover{color:var(--ac)}
+nav a.on{background:var(--ac);color:#000;font-weight:600}
+#admin{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:8px 16px;background:var(--s2);border-top:1px solid var(--ln)}
+#admin:empty{display:none}
+#admin span{color:var(--mu);font-size:.85rem;margin-right:8px}
+main{flex:1;width:100%;max-width:1120px;margin:0 auto;padding:clamp(32px,6vw,72px) clamp(20px,5vw,48px) 96px}
+footer{border-top:1px solid var(--ln);padding:28px;text-align:center;color:var(--mu);font-size:.85rem}
 h1{font-weight:800;margin:0;line-height:1.05}
-h2{font-size:1.1rem;margin:56px 0 16px;color:var(--mu);font-weight:600}
-.hd{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}
-.hd h1{font-size:clamp(2rem,5vw,3rem)}
-.hero{display:grid;grid-template-columns:minmax(0,260px) 1fr;gap:clamp(24px,5vw,56px);align-items:end}
-.hero h1{font-size:clamp(2.6rem,7vw,5.5rem);letter-spacing:-.03em}
-.ph img,.ph0{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;filter:grayscale(1) contrast(1.05);display:block}
-.ph0{background:var(--s2)}
-.bio{color:#c9c9c9;font-size:1.05rem;max-width:56ch;white-space:pre-wrap;margin:20px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
-.grid.tx{grid-template-columns:1fr;max-width:720px}
-.c{background:var(--s1);border:1px solid var(--ln);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
-.c h3{margin:0;font-size:1.1rem;line-height:1.3}
-.c small{color:var(--mu);margin-right:12px}
-.c p{margin:0;color:#b5b5b5;white-space:pre-wrap;overflow-wrap:anywhere}
-.c iframe,.c video{width:100%;aspect-ratio:16/9;border:0;border-radius:4px;background:#000;display:block}
+h2{font-size:1.4rem;margin:72px 0 24px;color:var(--tx);font-weight:800;letter-spacing:-.02em}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid var(--ln)}
+.hd h1{font-size:clamp(2.4rem,6vw,4rem);letter-spacing:-.03em}
+.hero{display:grid;grid-template-columns:1fr minmax(0,300px);gap:clamp(28px,6vw,80px);align-items:center;position:relative;isolation:isolate;padding:clamp(8px,3vw,32px) 0 24px}
+.hero::before{content:"";position:absolute;top:-25%;right:-15%;width:65%;height:130%;background:radial-gradient(closest-side,rgba(255,255,255,.08),transparent);pointer-events:none;z-index:-1}
+.hero h1{font-size:clamp(3rem,9vw,7rem);letter-spacing:-.04em;line-height:.95;overflow-wrap:anywhere}
+.ph{order:2}
+.ph img,.ph0{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:12px;filter:grayscale(1) contrast(1.08);display:block;box-shadow:0 0 0 1px var(--ln),0 30px 60px -20px rgba(0,0,0,.8)}
+.ph0{background:linear-gradient(160deg,var(--s2),var(--s1))}
+.bio{color:#c4c4c4;font-size:1.1rem;max-width:52ch;white-space:pre-wrap;margin:28px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
+.grid.tx{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.c{background:var(--s1);border:1px solid var(--ln);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0;transition:border-color .2s}
+.c:hover{border-color:#4a4a4a}
+.c.t{padding:26px}
+.c h3{margin:0;font-size:1.15rem;line-height:1.3}
+.c small{color:var(--mu);font-size:.8rem;margin-right:12px}
+.c p{margin:0;color:#b0b0b0;white-space:pre-wrap;overflow-wrap:anywhere}
+.c iframe,.c video{width:100%;aspect-ratio:16/9;border:0;border-radius:8px;background:#000;display:block}
 .c iframe.sp{aspect-ratio:auto;height:152px}
 .c iframe.sp.big{height:352px}
-.c img{width:100%;border-radius:4px}
+.c img{width:100%;border-radius:8px}
 .c audio{width:100%}
 .lk{color:var(--ac);overflow-wrap:anywhere}
+main>p.mu{padding:48px 0;font-size:1.1rem}
 .mu{color:var(--mu)}
-.ttl{all:unset;cursor:pointer;font:600 1.1rem/1.3 Manrope,sans-serif;color:var(--ac)}
-.ttl:hover{text-decoration:underline}
-.ex{font-family:Lora,serif}
+.ttl{all:unset;cursor:pointer;font:700 1.25rem/1.3 Manrope,sans-serif;color:var(--ac);letter-spacing:-.01em}
+.ttl:hover{text-decoration:underline;text-underline-offset:4px}
+.ex{font-family:Lora,serif;font-size:1.02rem;line-height:1.75;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .ad{display:flex;gap:8px;margin-top:4px}
-button,.b{font:inherit;font-size:.9rem;background:var(--s2);color:var(--tx);border:1px solid var(--ln);border-radius:4px;padding:6px 12px;cursor:pointer}
-button:hover{border-color:#666}
+button,.b{font:inherit;font-size:.9rem;background:var(--s2);color:var(--tx);border:1px solid var(--ln);border-radius:999px;padding:6px 16px;cursor:pointer;transition:border-color .15s}
+button:hover{border-color:#777}
 .pri{background:var(--ac);color:#000;border-color:var(--ac);font-weight:600}
 :focus-visible{outline:2px solid #fff;outline-offset:2px}
-dialog{background:var(--s1);color:var(--tx);border:1px solid var(--ln);border-radius:8px;padding:24px;width:min(680px,92vw);max-height:90vh}
-dialog::backdrop{background:rgba(0,0,0,.75)}
-.rt{font-family:Lora,serif;font-size:1.15rem;line-height:1.85;white-space:pre-wrap;margin-top:20px}
+dialog{background:var(--s1);color:var(--tx);border:1px solid var(--ln);border-radius:14px;padding:28px;width:min(700px,92vw);max-height:90vh;box-shadow:0 40px 80px rgba(0,0,0,.6)}
+dialog::backdrop{background:rgba(0,0,0,.78);backdrop-filter:blur(3px)}
+.rt{font-family:Lora,serif;font-size:1.15rem;line-height:1.9;white-space:pre-wrap;margin-top:20px}
 .rt.poem{text-align:center;font-style:italic}
-label{display:block;margin:12px 0 4px;color:var(--mu);font-size:.9rem}
-input,select,textarea{width:100%;font:inherit;background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:4px;padding:8px 10px}
+label{display:block;margin:14px 0 4px;color:var(--mu);font-size:.9rem}
+input,select,textarea{width:100%;font:inherit;background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:8px;padding:9px 12px}
 textarea{min-height:180px;resize:vertical}
-.row{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:22px}
 .hint{color:var(--mu);font-size:.85rem;margin-top:4px}
 [hidden]{display:none!important}
 @media(max-width:760px){
- body{display:block}
- aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--ln);padding:20px}
- nav{display:flex;gap:16px;overflow-x:auto}
- nav a{white-space:nowrap}
- #admin{flex-direction:row;margin-top:0}
+ .bar{flex-direction:column;align-items:flex-start;gap:8px;padding-block:12px}
+ nav{width:100%}
  .hero{grid-template-columns:1fr}
- .ph{max-width:200px}
+ .ph{order:0;max-width:220px}
+ .hd{margin-bottom:28px}
 }
 </style>
 </head>
 <body>
-<aside>
-  <a id="brand" href="#home"></a>
-  <nav id="nav"></nav>
+<header>
+  <div class="bar">
+    <a id="brand" href="#home"></a>
+    <nav id="nav"></nav>
+  </div>
   <div id="admin"></div>
-</aside>
+</header>
 <main id="main"></main>
+<footer id="ft"></footer>
 
 <dialog id="rd"></dialog>
 
@@ -171,7 +184,7 @@ function card(it) {
   const meta = `<div><small>${TYPES[it.type]}</small><small>${esc(it.date)}</small></div>`;
   if (TEXT.includes(it.type)) {
     const ex = (it.body || '').split('\n').slice(0, 3).join('\n').slice(0, 160);
-    return `<article class="c"><button class="ttl" data-a="read" data-id="${it.id}">${esc(it.title)}</button>${meta}<p class="ex">${esc(ex)}</p>${ad}</article>`;
+    return `<article class="c t"><button class="ttl" data-a="read" data-id="${it.id}">${esc(it.title)}</button>${meta}<p class="ex">${esc(ex)}</p>${ad}</article>`;
   }
   return `<article class="c">${media(it)}<h3>${esc(it.title)}</h3>${meta}${it.body ? `<p>${esc(it.body)}</p>` : ''}${ad}</article>`;
 }
@@ -190,9 +203,10 @@ function render() {
   const h = location.hash.slice(1) || 'home', k = h in TYPES ? h : 'home';
   $('#brand').textContent = S.profile.name;
   document.title = S.profile.name;
+  $('#ft').textContent = '© ' + new Date().getFullYear() + ' ' + S.profile.name;
   $('#nav').innerHTML = `<a href="#home" class="${k=='home'?'on':''}">Миний тухай</a>` + Object.entries(TYPES).map(([t, v]) => `<a href="#${t}" class="${k==t?'on':''}">${v}</a>`).join('');
   $('#admin').innerHTML = admin
-    ? '<button data-a="export">Экспорт</button><button data-a="reset">Цэвэрлэх</button><button data-a="out">Гарах</button>'
+    ? '<span>Засварын горим</span><button data-a="export">Экспорт</button><button data-a="reset">Цэвэрлэх</button><button data-a="out">Гарах</button>'
     : '';
   $('#main').innerHTML = k == 'home' ? home() : list(k);
 }
