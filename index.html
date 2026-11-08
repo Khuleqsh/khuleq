@@ -70,6 +70,11 @@ textarea{min-height:180px;resize:vertical}
 .row{display:flex;gap:8px;justify-content:flex-end;margin-top:22px}
 .hint{color:var(--mu);font-size:.85rem;margin-top:4px}
 [hidden]{display:none!important}
+.cmt{padding:14px 0;border-top:1px solid var(--ln)}
+.cmt b{margin-right:12px}
+.cmt small{color:var(--mu)}
+.cmt p{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;color:#c4c4c4}
+#cm-l{margin-top:24px}
 @media(max-width:760px){
  .bar{flex-direction:column;align-items:flex-start;gap:8px;padding-block:12px}
  nav{width:100%}
@@ -92,6 +97,30 @@ textarea{min-height:180px;resize:vertical}
 
 <dialog id="rd"></dialog>
 
+<dialog id="cm">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h3 id="cm-t" style="margin:0;font-size:1.2rem"></h3><button data-a="close">Хаах</button></div>
+  <form id="cf">
+    <label>Нэр</label>
+    <input name="nm" maxlength="40" required>
+    <input name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+    <label>Коммент</label>
+    <textarea name="tx" maxlength="500" required style="min-height:90px"></textarea>
+    <div class="row"><span class="hint" id="cm-s" style="margin-right:auto"></span><button class="pri">Илгээх</button></div>
+  </form>
+  <div id="cm-l"></div>
+</dialog>
+
+<dialog id="lg">
+  <form id="lf">
+    <label>Имэйл</label>
+    <input name="em" type="email" autocomplete="username" required>
+    <label>Нууц үг</label>
+    <input name="pw" type="password" autocomplete="current-password" required>
+    <p class="hint" id="lg-s"></p>
+    <div class="row"><button type="button" data-a="close">Болих</button><button class="pri">Нэвтрэх</button></div>
+  </form>
+</dialog>
+
 <dialog id="dm">
   <form id="fm">
     <input type="hidden" name="iid">
@@ -104,7 +133,7 @@ textarea{min-height:180px;resize:vertical}
       <input name="link" placeholder="YouTube, Spotify, SoundCloud, mp4 холбоос эсвэл videos/kino.mp4">
       <div data-k="film">
         <input type="file" name="vf" accept="video/mp4,video/webm" style="margin-top:8px">
-        <p class="hint">mp4 файл сонговол зам нь автоматаар “videos/файлын-нэр” болно. Файлаа төслийн videos хавтас руу хуулна.</p>
+        <p class="hint" id="up-s">mp4 файл сонговол Firebase руу шууд хуулагдана. Firebase Storage холбоогүй бол зөвхөн зам нь бөглөгдөнө, файлаа videos хавтас руу өөрөө хуулна.</p>
       </div>
     </div>
     <div data-k="film">
@@ -134,7 +163,18 @@ textarea{min-height:180px;resize:vertical}
 <script>
 // ===== Тохиргоо =====
 // Нууц хаалга: сайтын хаяг дараа нь /#нууц-үг-хаалга гэж бичиж орно. Хоёуланг нь өөрөө солино.
-const CFG = { door: 'khuleq-zasvar', pass: '1234' };
+const CFG = {
+  door: 'khuleq-zasvar', pass: '1234',
+  // Firebase тохиргоо (Project settings → Your apps → Web app). projectId хоосон бол сайт Firebase-гүйгээр ажиллана.
+  // storageBucket-ийг зөвхөн mp4 файлыг шууд хуулах бол бөглөнө (Blaze төлөвлөгөө шаардлагатай).
+  firebase: {
+    apiKey: 'AIzaSyCOEOmK20vogzYmcmraY1rOc2hUZ9mShAg',
+    authDomain: 'khuleq-c5d02.firebaseapp.com',
+    projectId: 'khuleq-c5d02',
+    storageBucket: 'khuleq-c5d02.firebasestorage.app',
+    appId: '1:773541175672:web:86af4b5f0828d7e710a88d'
+  }
+};
 const TYPES = { film:'Кино', post:'Тэмдэглэл', poem:'Шүлэг', story:'Зохиол', playlist:'Playlist', video:'Бичлэг', link:'Холбоос' };
 const TEXT = ['post','poem','story'];
 
@@ -150,10 +190,14 @@ const SEED = {
 // ===== Төлөв =====
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let S; try { S = JSON.parse(localStorage.getItem('site-v1')); } catch(e) {}
+const FBON = !!CFG.firebase.projectId, FBST = FBON && !!CFG.firebase.storageBucket;
+let S; try { if (!FBON) S = JSON.parse(localStorage.getItem('site-v1')); } catch(e) {}
 S = S || structuredClone(SEED);
-let admin = sessionStorage.getItem('adm') === '1';
-const save = () => { try { localStorage.setItem('site-v1', JSON.stringify(S)); } catch(e) { alert('Хадгалах зай дүүрсэн байна. Зургийг жижигрүүлж эсвэл файлын зам ашиглана уу.'); } };
+let admin = !FBON && sessionStorage.getItem('adm') === '1';
+const save = () => {
+  if (FBON) { FB.saveSite(S).catch(e => alert('Хадгалж чадсангүй: ' + e.message)); return; }
+  try { localStorage.setItem('site-v1', JSON.stringify(S)); } catch(e) { alert('Хадгалах зай дүүрсэн байна. Зургийг жижигрүүлж эсвэл файлын зам ашиглана уу.'); }
+};
 
 // ===== Холбоос хувиргагч =====
 function embed(u) {
@@ -180,7 +224,7 @@ function media(it) {
 
 // ===== Дүрслэл =====
 function card(it) {
-  const ad = admin ? `<span class="ad"><button data-a="edit" data-id="${it.id}">Засах</button><button data-a="del" data-id="${it.id}">Устгах</button></span>` : '';
+  const ad = `<span class="ad"><button data-a="cm" data-id="${it.id}">Коммент</button>${admin ? `<button data-a="edit" data-id="${it.id}">Засах</button><button data-a="del" data-id="${it.id}">Устгах</button>` : ''}</span>`;
   const meta = `<div><small>${TYPES[it.type]}</small><small>${esc(it.date)}</small></div>`;
   if (TEXT.includes(it.type)) {
     const ex = (it.body || '').split('\n').slice(0, 3).join('\n').slice(0, 160);
@@ -206,7 +250,7 @@ function render() {
   $('#ft').textContent = '© ' + new Date().getFullYear() + ' ' + S.profile.name;
   $('#nav').innerHTML = `<a href="#home" class="${k=='home'?'on':''}">Миний тухай</a>` + Object.entries(TYPES).map(([t, v]) => `<a href="#${t}" class="${k==t?'on':''}">${v}</a>`).join('');
   $('#admin').innerHTML = admin
-    ? '<span>Засварын горим</span><button data-a="export">Экспорт</button><button data-a="reset">Цэвэрлэх</button><button data-a="out">Гарах</button>'
+    ? '<span>Засварын горим</span>' + (FBON ? '' : '<button data-a="export">Экспорт</button><button data-a="reset">Цэвэрлэх</button>') + '<button data-a="out">Гарах</button>'
     : '';
   $('#main').innerHTML = k == 'home' ? home() : list(k);
 }
@@ -216,7 +260,15 @@ const fm = $('#fm'), fe = fm.elements;
 fe.kind.innerHTML = Object.entries(TYPES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
 const sync = () => fm.querySelectorAll('[data-k]').forEach(d => d.hidden = !d.dataset.k.split(' ').includes(fe.kind.value));
 fe.kind.onchange = sync;
-fe.vf.onchange = () => { if (fe.vf.files[0]) fe.link.value = 'videos/' + fe.vf.files[0].name; };
+let upl = false;
+fe.vf.onchange = () => {
+  const f = fe.vf.files[0]; if (!f) return;
+  if (!FBST) { fe.link.value = 'videos/' + f.name; return; }
+  const st = $('#up-s'); upl = true; st.textContent = 'Хуулж байна 0%';
+  FB.upload(f, 'videos/' + Date.now() + '-' + f.name.replace(/[^\w.-]/g, '_'), p => st.textContent = 'Хуулж байна ' + Math.round(p * 100) + '%')
+    .then(u => { fe.link.value = u; st.textContent = 'Файл бэлэн. Хадгалах дарна уу.'; }, er => { st.textContent = 'Алдаа: ' + er.message; })
+    .finally(() => upl = false);
+};
 
 function openForm(id, kind) {
   const it = S.items.find(x => x.id == id) || { type: kind || 'post' };
@@ -226,6 +278,7 @@ function openForm(id, kind) {
 }
 fm.onsubmit = e => {
   e.preventDefault();
+  if (upl) { alert('Файл хуулж дуустал хүлээнэ үү.'); return; }
   const id = fe.iid.value, old = S.items.find(x => x.id == id);
   const it = { id: id || Date.now().toString(36), type: fe.kind.value, title: fe.ttl.value.trim(), url: fe.link.value.trim(), subs: fe.subs.value.trim(), body: fe.txt.value, date: old ? old.date : new Date().toISOString().slice(0, 10) };
   if (old) Object.assign(old, it); else S.items.unshift(it);
@@ -240,7 +293,10 @@ ae.pf.onchange = () => {
     const k = Math.min(1, 640 / Math.max(im.width, im.height)), c = document.createElement('canvas');
     c.width = im.width * k; c.height = im.height * k;
     c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-    pend = c.toDataURL('image/jpeg', .85); $('#pst').textContent = 'Зураг сонгогдлоо. Хадгалах дарна уу.';
+    if (FBST) {
+      $('#pst').textContent = 'Хуулж байна…';
+      c.toBlob(b => FB.upload(b, 'profile/me-' + Date.now() + '.jpg').then(u => { pend = u; $('#pst').textContent = 'Зураг бэлэн. Хадгалах дарна уу.'; }, () => { pend = c.toDataURL('image/jpeg', .85); $('#pst').textContent = 'Зураг бэлэн. Хадгалах дарна уу.'; }), 'image/jpeg', .85);
+    } else { pend = c.toDataURL('image/jpeg', .85); $('#pst').textContent = 'Зураг сонгогдлоо. Хадгалах дарна уу.'; }
   }; im.src = r.result; };
   r.readAsDataURL(fl);
 };
@@ -256,13 +312,15 @@ document.addEventListener('click', e => {
   const b = e.target.closest('[data-a]'); if (!b) return;
   const a = b.dataset.a, id = b.dataset.id;
   if (a == 'close') b.closest('dialog').close();
+  else if (a == 'dc') { if (confirm('Коммент устгах уу?')) CM.del(id).then(loadCm); }
+  else if (a == 'cm') { $('#rd').close(); openCm(id); }
   else if (a == 'read') {
     const it = S.items.find(x => x.id == id);
-    $('#rd').innerHTML = `<button data-a="close">Хаах</button><h2 style="color:var(--tx);margin:20px 0 0;font-size:1.6rem">${esc(it.title)}</h2><div class="rt ${it.type}">${esc(it.body)}</div>`;
+    $('#rd').innerHTML = `<button data-a="close">Хаах</button> <button data-a="cm" data-id="${id}">Коммент</button><h2 style="color:var(--tx);margin:20px 0 0;font-size:1.6rem">${esc(it.title)}</h2><div class="rt ${it.type}">${esc(it.body)}</div>`;
     $('#rd').showModal();
   }
   else if (a == 'in') { if (prompt('Нууц үг') === CFG.pass) { admin = true; sessionStorage.setItem('adm', '1'); render(); } }
-  else if (a == 'out') { admin = false; sessionStorage.removeItem('adm'); render(); }
+  else if (a == 'out') { if (FBON) FB.logout(); admin = false; sessionStorage.removeItem('adm'); render(); }
   else if (a == 'add') openForm(null, b.dataset.k);
   else if (a == 'edit') openForm(id);
   else if (a == 'del') { if (confirm('Устгах уу?')) { S.items = S.items.filter(x => x.id != id); save(); render(); } }
@@ -273,13 +331,89 @@ document.addEventListener('click', e => {
   }
   else if (a == 'reset') { if (confirm('Энэ браузер дээрх өөрчлөлтийг арилгаад файл доторх агуулга руу буцах уу?')) { localStorage.removeItem('site-v1'); S = structuredClone(SEED); render(); } }
 });
+// ===== Коммент =====
+const cf = $('#cf'), ce = cf.elements; let cmId = null;
+async function loadCm() {
+  const L = $('#cm-l');
+  if (!(window.CM && CM.on)) { cf.hidden = true; L.innerHTML = '<p class="mu">Коммент одоогоор холбогдоогүй байна.</p>'; return; }
+  cf.hidden = false; L.innerHTML = '<p class="mu">Уншиж байна…</p>';
+  try {
+    const r = await CM.load(cmId);
+    L.innerHTML = r.length ? r.map(c => `<div class="cmt"><b>${esc(c.name)}</b><small>${c.t ? new Date(c.t.seconds * 1000).toISOString().slice(0, 10) : ''}</small><p>${esc(c.text)}</p>${admin ? `<button data-a="dc" data-id="${c.id}">Устгах</button>` : ''}</div>`).join('') : '<p class="mu">Анхны коммент болоорой.</p>';
+  } catch (e) { L.innerHTML = '<p class="mu">Коммент уншиж чадсангүй.</p>'; }
+}
+function openCm(id) {
+  const it = S.items.find(x => x.id == id); if (!it) return;
+  cmId = id; $('#cm-t').textContent = it.title; $('#cm-s').textContent = '';
+  ce.nm.value = localStorage.getItem('cm-name') || ''; ce.tx.value = '';
+  $('#cm').showModal(); loadCm();
+}
+cf.onsubmit = async e => {
+  e.preventDefault(); const st = $('#cm-s');
+  if (ce.website.value) return;
+  const nm = ce.nm.value.trim().slice(0, 40), tx = ce.tx.value.trim().slice(0, 500);
+  if (!nm || !tx) return;
+  if (Date.now() - (+localStorage.getItem('cm-last') || 0) < 30000) { st.textContent = '30 секунд хүлээгээд дахин илгээнэ үү.'; return; }
+  st.textContent = 'Илгээж байна…';
+  try { await CM.add(cmId, nm, tx); localStorage.setItem('cm-last', Date.now()); localStorage.setItem('cm-name', nm); ce.tx.value = ''; st.textContent = ''; loadCm(); }
+  catch (x) { st.textContent = 'Илгээж чадсангүй. Дахин оролдоно уу.'; }
+};
+
+addEventListener('fb-ready', () => {
+  if (!FBON) return;
+  FB.onAuth(u => { admin = !!u; render(); });
+  FB.loadSite().then(d => { if (d) { S = d; render(); } }).catch(() => {});
+});
+$('#lf').onsubmit = e => {
+  e.preventDefault(); const f = e.target.elements;
+  FB.login(f.em.value.trim(), f.pw.value).then(() => { $('#lg').close(); f.pw.value = ''; $('#lg-s').textContent = ''; }, () => { $('#lg-s').textContent = 'Имэйл эсвэл нууц үг буруу байна.'; });
+};
+
 function gate() {
   if (location.hash !== '#' + CFG.door) return;
   history.replaceState(null, '', location.pathname + location.search); // хаягаас нууц үгийг арилгана
+  if (FBON) { if (!admin) $('#lg').showModal(); return; }
   if (!admin && prompt('Нууц үг') === CFG.pass) { admin = true; sessionStorage.setItem('adm', '1'); }
 }
 addEventListener('hashchange', () => { gate(); render(); });
 gate(); render();
+</script>
+<script type="module">
+const V = '10.12.0', G = 'https://www.gstatic.com/firebasejs/' + V + '/';
+const F = CFG.firebase, on = !!(F && F.projectId);
+if (!on) { window.CM = { on: false }; window.FB = { on: false }; }
+else {
+  const { initializeApp } = await import(G + 'firebase-app.js');
+  const { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, deleteDoc, doc, query, where, limit, serverTimestamp } = await import(G + 'firebase-firestore.js');
+  const { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } = await import(G + 'firebase-auth.js');
+  const app = initializeApp(F), db = getFirestore(app), au = getAuth(app);
+  window.CM = {
+    on: true,
+    async load(id) {
+      const s = await getDocs(query(collection(db, 'comments'), where('itemId', '==', id), limit(100)));
+      return s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.t?.seconds || 0) - (a.t?.seconds || 0));
+    },
+    async add(id, name, text) { await addDoc(collection(db, 'comments'), { itemId: id, name, text, t: serverTimestamp() }); },
+    del: id => deleteDoc(doc(db, 'comments', id))
+  };
+  window.FB = {
+    on: true,
+    async loadSite() { const s = await getDoc(doc(db, 'site', 'main')); return s.exists() ? JSON.parse(s.data().json) : null; },
+    saveSite: d => setDoc(doc(db, 'site', 'main'), { json: JSON.stringify(d) }),
+    login: (e, p) => signInWithEmailAndPassword(au, e, p),
+    logout: () => signOut(au),
+    onAuth: cb => onAuthStateChanged(au, cb),
+    async upload(file, path, prog) {
+      const { getStorage, ref, uploadBytesResumable, getDownloadURL } = await import(G + 'firebase-storage.js');
+      const r = ref(getStorage(app), path);
+      return new Promise((res, rej) => {
+        const t = uploadBytesResumable(r, file);
+        t.on('state_changed', s => prog && prog(s.bytesTransferred / s.totalBytes), rej, () => getDownloadURL(t.snapshot.ref).then(res, rej));
+      });
+    }
+  };
+}
+dispatchEvent(new Event('fb-ready'));
 </script>
 </body>
 </html>
