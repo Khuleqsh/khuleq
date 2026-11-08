@@ -252,7 +252,7 @@ function home() {
 function list(k) {
   const its = S.items.filter(i => i.type == k);
   return `<div class="hd"><h1>${TYPES[k]}</h1>${admin ? `<button class="pri" data-a="add" data-k="${k}">Нэмэх</button>` : ''}</div>
-  ${its.length ? `<div class="grid ${TEXT.includes(k) ? 'tx' : ''}">${its.map(card).join('')}</div>` : '<p class="mu">Одоогоор юу ч алга.</p>'}`;
+  ${its.length ? `<div class="grid ${TEXT.includes(k) ? 'tx' : ''}">${its.map(card).join('')}</div>` : '<p class="mu">Одоогоор хоосон байна</p>'}`;
 }
 function render() {
   // ШИНЭЭР НЭМСЭН: Уншиж байх үед түр харуулах дэлгэц
