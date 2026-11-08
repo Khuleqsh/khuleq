@@ -194,6 +194,8 @@ const FBON = !!CFG.firebase.projectId, FBST = FBON && !!CFG.firebase.storageBuck
 let S; try { if (!FBON) S = JSON.parse(localStorage.getItem('site-v1')); } catch(e) {}
 S = S || structuredClone(SEED);
 let admin = !FBON && sessionStorage.getItem('adm') === '1';
+let isLoading = FBON; // ШИНЭЭР НЭМСЭН: Firebase уншиж дуустал Loading төлөв үүсгэх
+
 const save = () => {
   if (FBON) { FB.saveSite(S).catch(e => alert('Хадгалж чадсангүй: ' + e.message)); return; }
   try { localStorage.setItem('site-v1', JSON.stringify(S)); } catch(e) { alert('Хадгалах зай дүүрсэн байна. Зургийг жижигрүүлж эсвэл файлын зам ашиглана уу.'); }
@@ -244,6 +246,17 @@ function list(k) {
   ${its.length ? `<div class="grid ${TEXT.includes(k) ? 'tx' : ''}">${its.map(card).join('')}</div>` : '<p class="mu">Одоогоор юу ч алга.</p>'}`;
 }
 function render() {
+  // ШИНЭЭР НЭМСЭН: Уншиж байх үед түр харуулах дэлгэц
+  if (isLoading) {
+    $('#brand').textContent = '';
+    document.title = 'Уншиж байна...';
+    $('#nav').innerHTML = '';
+    $('#admin').innerHTML = '';
+    $('#main').innerHTML = '<div style="display:flex; justify-content:center; padding:100px 0; color:var(--mu);">Мэдээлэл татаж байна...</div>';
+    $('#ft').textContent = '';
+    return;
+  }
+
   const h = location.hash.slice(1) || 'home', k = h in TYPES ? h : 'home';
   $('#brand').textContent = S.profile.name;
   document.title = S.profile.name;
@@ -361,8 +374,16 @@ cf.onsubmit = async e => {
 
 addEventListener('fb-ready', () => {
   if (!FBON) return;
-  FB.onAuth(u => { admin = !!u; render(); });
-  FB.loadSite().then(d => { if (d) { S = d; render(); } }).catch(() => {});
+  // ШИНЭЭР НЭМСЭН: Татаж дууссаны дараа isLoading = false болгоод жинхэнэ өгөгдлийг зурах
+  FB.onAuth(u => { admin = !!u; if (!isLoading) render(); });
+  FB.loadSite().then(d => { 
+    if (d) { S = d; } 
+    isLoading = false; 
+    render(); 
+  }).catch(() => {
+    isLoading = false;
+    render();
+  });
 });
 $('#lf').onsubmit = e => {
   e.preventDefault(); const f = e.target.elements;
