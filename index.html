@@ -44,7 +44,7 @@ h2{font-size:1.4rem;margin:72px 0 24px;color:var(--tx);font-weight:800;letter-sp
 .c h3{margin:0;font-size:1.15rem;line-height:1.3}
 .c small{color:var(--mu);font-size:.8rem;margin-right:12px}
 .c p{margin:0;color:#b0b0b0;white-space:pre-wrap;overflow-wrap:anywhere}
-.c iframe,.c video{width:100%;aspect-ratio:16/9;border:0;border-radius:8px;background:#000;display:block}
+.c iframe,.c video, #rd iframe, #rd video{width:100%;aspect-ratio:16/9;border:0;border-radius:8px;background:#000;display:block}
 .c iframe.sp{aspect-ratio:auto;height:152px}
 .c iframe.sp.big{height:352px}
 .c img{width:100%;border-radius:8px}
@@ -52,7 +52,7 @@ h2{font-size:1.4rem;margin:72px 0 24px;color:var(--tx);font-weight:800;letter-sp
 .lk{color:var(--ac);overflow-wrap:anywhere}
 main>p.mu{padding:48px 0;font-size:1.1rem}
 .mu{color:var(--mu)}
-.ttl{all:unset;cursor:pointer;font:700 1.25rem/1.3 Manrope,sans-serif;color:var(--ac);letter-spacing:-.01em}
+.ttl{all:unset;cursor:pointer;font:700 1.25rem/1.3 Manrope,sans-serif;color:var(--ac);letter-spacing:-.01em;display:block}
 .ttl:hover{text-decoration:underline;text-underline-offset:4px}
 .ex{font-family:Lora,serif;font-size:1.02rem;line-height:1.75;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .ad{display:flex;gap:8px;margin-top:4px}
@@ -60,7 +60,7 @@ button,.b{font:inherit;font-size:.9rem;background:var(--s2);color:var(--tx);bord
 button:hover{border-color:#777}
 .pri{background:var(--ac);color:#000;border-color:var(--ac);font-weight:600}
 :focus-visible{outline:2px solid #fff;outline-offset:2px}
-dialog{background:var(--s1);color:var(--tx);border:1px solid var(--ln);border-radius:14px;padding:28px;width:min(700px,92vw);max-height:90vh;box-shadow:0 40px 80px rgba(0,0,0,.6)}
+dialog{background:var(--s1);color:var(--tx);border:1px solid var(--ln);border-radius:14px;padding:28px;width:min(800px,92vw);max-height:90vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.6)}
 dialog::backdrop{background:rgba(0,0,0,.78);backdrop-filter:blur(3px)}
 .rt{font-family:Lora,serif;font-size:1.15rem;line-height:1.9;white-space:pre-wrap;margin-top:20px}
 .rt.poem{text-align:center;font-style:italic}
@@ -96,19 +96,6 @@ textarea{min-height:180px;resize:vertical}
 <footer id="ft"></footer>
 
 <dialog id="rd"></dialog>
-
-<dialog id="cm">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h3 id="cm-t" style="margin:0;font-size:1.2rem"></h3><button data-a="close">Хаах</button></div>
-  <form id="cf">
-    <label>Нэр</label>
-    <input name="nm" maxlength="40" required>
-    <input name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
-    <label>Коммент</label>
-    <textarea name="tx" maxlength="500" required style="min-height:90px"></textarea>
-    <div class="row"><span class="hint" id="cm-s" style="margin-right:auto"></span><button class="pri">Илгээх</button></div>
-  </form>
-  <div id="cm-l"></div>
-</dialog>
 
 <dialog id="lg">
   <form id="lf">
@@ -162,11 +149,8 @@ textarea{min-height:180px;resize:vertical}
 
 <script>
 // ===== Тохиргоо =====
-// Нууц хаалга: сайтын хаяг дараа нь /#нууц-үг-хаалга гэж бичиж орно. Хоёуланг нь өөрөө солино.
 const CFG = {
   door: 'khuleq-zasvar', pass: '1234',
-  // Firebase тохиргоо (Project settings → Your apps → Web app). projectId хоосон бол сайт Firebase-гүйгээр ажиллана.
-  // storageBucket-ийг зөвхөн mp4 файлыг шууд хуулах бол бөглөнө (Blaze төлөвлөгөө шаардлагатай).
   firebase: {
     apiKey: 'AIzaSyCOEOmK20vogzYmcmraY1rOc2hUZ9mShAg',
     authDomain: 'khuleq-c5d02.firebaseapp.com',
@@ -178,7 +162,6 @@ const CFG = {
 const TYPES = { film:'Кино', post:'Тэмдэглэл', poem:'Шүлэг', story:'Зохиол', playlist:'Playlist', video:'Бичлэг', link:'Холбоос' };
 const TEXT = ['post','poem','story'];
 
-// Нийтэд харагдах агуулга. “Экспорт” товчоор авсан кодыг SEED-ийн оронд буулгана.
 const SEED = {
   profile: { name:'Таны нэр', bio:'Өөрийнхөө тухай энд бичнэ. Зүүн доорх “Засах” товчийг дарж нууц үгээ оруулаад өөрчилнө.', photo:'' },
   items: [
@@ -194,7 +177,7 @@ const FBON = !!CFG.firebase.projectId, FBST = FBON && !!CFG.firebase.storageBuck
 let S; try { if (!FBON) S = JSON.parse(localStorage.getItem('site-v1')); } catch(e) {}
 S = S || structuredClone(SEED);
 let admin = !FBON && sessionStorage.getItem('adm') === '1';
-let isLoading = FBON; // ШИНЭЭР НЭМСЭН: Firebase уншиж дуустал Loading төлөв үүсгэх
+let isLoading = FBON; 
 
 const save = () => {
   if (FBON) { FB.saveSite(S).catch(e => alert('Хадгалж чадсангүй: ' + e.message)); return; }
@@ -202,24 +185,20 @@ const save = () => {
 };
 
 // ===== Холбоос хувиргагч =====
-// ===== Холбоос хувиргагч =====
 function embed(u) {
   u = String(u || '').trim();
   if (/^javascript:/i.test(u)) return '';
   const e = esc(u); let m;
-  const fr = (src, cls='') => `<iframe class="${cls}" src="${src}" loading="lazy" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture; fullscreen"></iframe>`;
+  // Fullscreen гацалтыг арилгах нэмэлт тохиргоо (allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true")
+  const fr = (src, cls='') => `<iframe class="${cls}" src="${src}" loading="lazy" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; encrypted-media; picture-in-picture; fullscreen"></iframe>`;
   
-  // YouTube, Spotify гэх мэт...
   if (m = u.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/)) return fr(`https://www.youtube-nocookie.com/embed/${m[1]}`);
   if (m = u.match(/youtube\.com\/playlist\?(?:.*&)?list=([\w-]+)/)) return fr(`https://www.youtube-nocookie.com/embed/videoseries?list=${m[1]}`);
   if (m = u.match(/open\.spotify\.com\/(?:intl-\w+\/)?(track|album|playlist|episode|show|artist)\/(\w+)/)) return fr(`https://open.spotify.com/embed/${m[1]}/${m[2]}`, m[1]=='track'||m[1]=='episode' ? 'sp' : 'sp big');
   if (/soundcloud\.com\//.test(u)) return fr(`https://w.soundcloud.com/player/?url=${encodeURIComponent(u)}`, 'sp');
   if (m = u.match(/vimeo\.com\/(\d+)/)) return fr(`https://player.vimeo.com/video/${m[1]}`);
-  
-  // ШИНЭЭР НЭМСЭН МӨР: Google Drive линк таньж preview болгох
   if (m = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/)) return fr(`https://drive.google.com/file/d/${m[1]}/preview`);
 
-  // MP4, MP3, Зураг таних хэсэг...
   if (/\.(mp4|webm|mov)(\?|$)/i.test(u)) return `<video controls preload="metadata" playsinline src="${e}"></video>`;
   if (/\.(mp3|ogg|wav|m4a)(\?|$)/i.test(u)) return `<audio controls src="${e}"></audio>`;
   if (/\.(jpe?g|png|gif|webp|avif)(\?|$)/i.test(u)) return `<img src="${e}" alt="" loading="lazy">`;
@@ -235,14 +214,24 @@ function media(it) {
 
 // ===== Дүрслэл =====
 function card(it) {
-  const ad = `<span class="ad"><button data-a="cm" data-id="${it.id}">Коммент</button>${admin ? `<button data-a="edit" data-id="${it.id}">Засах</button><button data-a="del" data-id="${it.id}">Устгах</button>` : ''}</span>`;
+  const ad = admin ? `<span class="ad"><button data-a="edit" data-id="${it.id}">Засах</button><button data-a="del" data-id="${it.id}">Устгах</button></span>` : '';
   const meta = `<div><small>${TYPES[it.type]}</small><small>${esc(it.date)}</small></div>`;
+  
   if (TEXT.includes(it.type)) {
     const ex = (it.body || '').split('\n').slice(0, 3).join('\n').slice(0, 160);
     return `<article class="c t"><button class="ttl" data-a="read" data-id="${it.id}">${esc(it.title)}</button>${meta}<p class="ex">${esc(ex)}</p>${ad}</article>`;
   }
-  return `<article class="c">${media(it)}<h3>${esc(it.title)}</h3>${meta}${it.body ? `<p>${esc(it.body)}</p>` : ''}${ad}</article>`;
+  
+  // Коммент товчийг авч хаяад, шууд гарчиг дээр дарахад пост руу ордог болгосон
+  return `<article class="c">
+    ${media(it)}
+    <button class="ttl" data-a="read" data-id="${it.id}" style="margin-top:12px">${esc(it.title)}</button>
+    ${meta}
+    ${it.body ? `<p class="ex">${esc(it.body)}</p>` : ''}
+    ${ad}
+  </article>`;
 }
+
 function home() {
   const p = S.profile, rec = S.items.slice(0, 6);
   return `<section class="hero"><div class="ph">${p.photo ? `<img src="${esc(p.photo)}" alt="">` : '<div class="ph0"></div>'}</div>
@@ -255,7 +244,6 @@ function list(k) {
   ${its.length ? `<div class="grid ${TEXT.includes(k) ? 'tx' : ''}">${its.map(card).join('')}</div>` : '<p class="mu">Одоогоор хоосон байна</p>'}`;
 }
 function render() {
-  // ШИНЭЭР НЭМСЭН: Уншиж байх үед түр харуулах дэлгэц
   if (isLoading) {
     $('#brand').textContent = '';
     document.title = 'Уншиж байна...';
@@ -265,7 +253,6 @@ function render() {
     $('#ft').textContent = '';
     return;
   }
-
   const h = location.hash.slice(1) || 'home', k = h in TYPES ? h : 'home';
   $('#brand').textContent = S.profile.name;
   document.title = S.profile.name;
@@ -335,11 +322,53 @@ document.addEventListener('click', e => {
   const a = b.dataset.a, id = b.dataset.id;
   if (a == 'close') b.closest('dialog').close();
   else if (a == 'dc') { if (confirm('Коммент устгах уу?')) CM.del(id).then(loadCm); }
-  else if (a == 'cm') { $('#rd').close(); openCm(id); }
   else if (a == 'read') {
     const it = S.items.find(x => x.id == id);
-    $('#rd').innerHTML = `<button data-a="close">Хаах</button> <button data-a="cm" data-id="${id}">Коммент</button><h2 style="color:var(--tx);margin:20px 0 0;font-size:1.6rem">${esc(it.title)}</h2><div class="rt ${it.type}">${esc(it.body)}</div>`;
+    cmId = id;
+    const isMedia = !TEXT.includes(it.type) && it.url;
+    
+    // Унших цонх руу пост, коммент хоёуланг нь нэгтгэн оруулсан хэсэг
+    $('#rd').innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:12px;">
+        <h2 style="margin:0;font-size:1.6rem;color:var(--tx);line-height:1.2">${esc(it.title)}</h2>
+        <button data-a="close">Хаах</button>
+      </div>
+      ${isMedia ? `<div style="margin-bottom:20px">${media(it)}</div>` : ''}
+      <div class="rt ${it.type}" style="margin-top:0">${esc(it.body)}</div>
+      
+      <div style="margin-top:32px; border-top:1px solid var(--ln); padding-top:24px;">
+        <h3 style="margin:0 0 16px; font-size:1.15rem">Сэтгэгдэл үлдээх</h3>
+        <form id="cf-in-rd">
+          <label style="margin-top:0">Нэр</label>
+          <input id="cf-nm" maxlength="40" required value="${esc(localStorage.getItem('cm-name') || '')}">
+          <input id="cf-web" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+          <label>Сэтгэгдэл</label>
+          <textarea id="cf-tx" maxlength="500" required style="min-height:80px"></textarea>
+          <div class="row"><span class="hint" id="cm-s" style="margin-right:auto"></span><button class="pri">Илгээх</button></div>
+        </form>
+        <div id="cm-l" style="margin-top:24px"></div>
+      </div>
+    `;
+    
+    // Коммент илгээх товчны үйлдэл
+    $('#cf-in-rd').onsubmit = async ev => {
+      ev.preventDefault(); const st = $('#cm-s');
+      if ($('#cf-web').value) return;
+      const nm = $('#cf-nm').value.trim().slice(0, 40), tx = $('#cf-tx').value.trim().slice(0, 500);
+      if (!nm || !tx) return;
+      if (Date.now() - (+localStorage.getItem('cm-last') || 0) < 30000) { st.textContent = '30 секунд хүлээнэ үү.'; return; }
+      st.textContent = 'Илгээж байна…';
+      try { 
+        await window.CM.add(cmId, nm, tx); 
+        localStorage.setItem('cm-last', Date.now()); 
+        localStorage.setItem('cm-name', nm); 
+        $('#cf-tx').value = ''; st.textContent = ''; 
+        loadCm(); 
+      } catch (x) { st.textContent = 'Алдаа гарлаа.'; }
+    };
+    
     $('#rd').showModal();
+    loadCm();
   }
   else if (a == 'in') { if (prompt('Нууц үг') === CFG.pass) { admin = true; sessionStorage.setItem('adm', '1'); render(); } }
   else if (a == 'out') { if (FBON) FB.logout(); admin = false; sessionStorage.removeItem('adm'); render(); }
@@ -353,37 +382,22 @@ document.addEventListener('click', e => {
   }
   else if (a == 'reset') { if (confirm('Энэ браузер дээрх өөрчлөлтийг арилгаад файл доторх агуулга руу буцах уу?')) { localStorage.removeItem('site-v1'); S = structuredClone(SEED); render(); } }
 });
-// ===== Коммент =====
-const cf = $('#cf'), ce = cf.elements; let cmId = null;
+
+// ===== Коммент унших =====
+let cmId = null;
 async function loadCm() {
   const L = $('#cm-l');
-  if (!(window.CM && CM.on)) { cf.hidden = true; L.innerHTML = '<p class="mu">Коммент одоогоор холбогдоогүй байна.</p>'; return; }
-  cf.hidden = false; L.innerHTML = '<p class="mu">Уншиж байна…</p>';
+  if (!L) return;
+  if (!(window.CM && window.CM.on)) { $('#cf-in-rd').hidden = true; L.innerHTML = '<p class="mu">Коммент одоогоор холбогдоогүй байна.</p>'; return; }
+  L.innerHTML = '<p class="mu">Уншиж байна…</p>';
   try {
-    const r = await CM.load(cmId);
+    const r = await window.CM.load(cmId);
     L.innerHTML = r.length ? r.map(c => `<div class="cmt"><b>${esc(c.name)}</b><small>${c.t ? new Date(c.t.seconds * 1000).toISOString().slice(0, 10) : ''}</small><p>${esc(c.text)}</p>${admin ? `<button data-a="dc" data-id="${c.id}">Устгах</button>` : ''}</div>`).join('') : '<p class="mu">Анхны коммент болоорой.</p>';
   } catch (e) { L.innerHTML = '<p class="mu">Коммент уншиж чадсангүй.</p>'; }
 }
-function openCm(id) {
-  const it = S.items.find(x => x.id == id); if (!it) return;
-  cmId = id; $('#cm-t').textContent = it.title; $('#cm-s').textContent = '';
-  ce.nm.value = localStorage.getItem('cm-name') || ''; ce.tx.value = '';
-  $('#cm').showModal(); loadCm();
-}
-cf.onsubmit = async e => {
-  e.preventDefault(); const st = $('#cm-s');
-  if (ce.website.value) return;
-  const nm = ce.nm.value.trim().slice(0, 40), tx = ce.tx.value.trim().slice(0, 500);
-  if (!nm || !tx) return;
-  if (Date.now() - (+localStorage.getItem('cm-last') || 0) < 30000) { st.textContent = '30 секунд хүлээгээд дахин илгээнэ үү.'; return; }
-  st.textContent = 'Илгээж байна…';
-  try { await CM.add(cmId, nm, tx); localStorage.setItem('cm-last', Date.now()); localStorage.setItem('cm-name', nm); ce.tx.value = ''; st.textContent = ''; loadCm(); }
-  catch (x) { st.textContent = 'Илгээж чадсангүй. Дахин оролдоно уу.'; }
-};
 
 addEventListener('fb-ready', () => {
   if (!FBON) return;
-  // ШИНЭЭР НЭМСЭН: Татаж дууссаны дараа isLoading = false болгоод жинхэнэ өгөгдлийг зурах
   FB.onAuth(u => { admin = !!u; if (!isLoading) render(); });
   FB.loadSite().then(d => { 
     if (d) { S = d; } 
@@ -401,7 +415,7 @@ $('#lf').onsubmit = e => {
 
 function gate() {
   if (location.hash !== '#' + CFG.door) return;
-  history.replaceState(null, '', location.pathname + location.search); // хаягаас нууц үгийг арилгана
+  history.replaceState(null, '', location.pathname + location.search); 
   if (FBON) { if (!admin) $('#lg').showModal(); return; }
   if (!admin && prompt('Нууц үг') === CFG.pass) { admin = true; sessionStorage.setItem('adm', '1'); }
 }
